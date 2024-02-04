@@ -1,2 +1,2 @@
 # SimonGameWebCopy
-First JQuery Beginne Project
+First JQuery Beginner Project
