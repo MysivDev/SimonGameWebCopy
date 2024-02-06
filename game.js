@@ -11,7 +11,6 @@ $(".btn").click(function (event){
     playSound(userChosenColor);
     animatePress(event.target.id);
     checkAwnser(userClickedPattern.length - 1);
-    console.log("GamePatttern: " + gamePattern + "|" +"UserPattern: " + userClickedPattern);
 });
 
 $(document).on("keypress", function (){
