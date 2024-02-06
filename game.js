@@ -76,3 +76,9 @@ function checkAnswer(userAwnser) {
         }
     }
 }
+
+/*Isnt working, fix: Game-routine each time the game is running, it should test if the UserInput is Right (Dont forget each time a new
+color enters, you have to enter the old and the new Color)*/
+
+//Maybe try first the basic one: So if you get a color right it comes the next one..
+//Advanced: Each time you get it right the new Color multiply by the Level (Level 1 = 1 new Color, Level 2 = 1 old and 2 new Colors, Level 3 = 3 old and 3 new Colors).
