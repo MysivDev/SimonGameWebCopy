@@ -1,84 +1,96 @@
-let audio;
-let colours = ["red", "blue", "green", "yellow"];
+let buttonColors = ["red", "blue", "green", "yellow"];
+let userClickedPattern = [];
 let gamePattern = [];
-let userClickedColour;
-let userInput = [];
-let playerChoosenColour;
-let gamestarted = false;
-let level;
+let audio;
+let gameStarted = false;
+let level = 0;
 
-$(document).keypress(function () {
-    if (!gamestarted) {
-        $("h1").text("Level 1");
-        gamestarted = true;
+$(".btn").click(function (event){
+    userChosenColor = event.target.id;
+    userClickedPattern.push(userChosenColor);
+    playSound(userChosenColor);
+    animatePress(event.target.id);
+    checkAwnser(userClickedPattern.length - 1);
+    console.log("GamePatttern: " + gamePattern + "|" +"UserPattern: " + userClickedPattern);
+});
+
+$(document).on("keypress", function (){
+    if(!gameStarted){
+        nextSequence();
+        gameStarted = true;
+        $("h1").text(`Level ${level}`);
+    }else{
+        console.log("Game cant start");
     }
 });
 
-$(".btn").click(function (Event) {
-    userClickedColour = Event.target.id;
-    userInput.push(userClickedColour);
-    playSound(userClickedColour);
-    console.log(Event.target.id);
-});
+function nextSequence(){
+    let randomNumber = Math.floor(Math.random() * 4);
+    let randomChosenColor = buttonColors[randomNumber];
 
-// FUNKTION SECTION //
-
-function generatedColour() {
-    let randomColour = Math.floor(Math.random() * 4);
-    gamePattern.push(colours[randomColour]);
-    return colours[randomColour];
-}
-
-function nextLevel() {
+    gamePattern.push(randomChosenColor);
     level++;
-    let repeater = level;
-    while (repeater > 0) {
-        $(`.${generatedColour()}`).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-        audio = new Audio(`sounds/${generatedColour()}`);
+
+    $("#" + randomChosenColor).fadeIn(100).fadeOut(100).fadeIn(100);
+    playSound(randomChosenColor);
+    
+    $("h1").text(`Level ${level}`);
+}
+
+function checkAwnser(currentLevel){
+    if(gamePattern[currentLevel] === userClickedPattern[currentLevel]){
+        console.log("success");
+        
+        if (userClickedPattern.length === gamePattern.length){
+            setTimeout(function () {
+              nextSequence();
+            }, 1000);
+        }
+    }else{
+        audio = new Audio("sounds/wrong.mp3");
         audio.play();
-        $("h1").text("Level 1");
-        repeater--;
+        $("body").addClass("game-over");
+        setTimeout(function () {
+            $("body").removeClass("game-over");
+          }, 200);
+        console.log("wrong");
+        $("h1").text("Game Over, Press Any Key to Restart");
+        startOver();
     }
 }
 
-function playSound(pickedColour) {
-    switch (pickedColour) {
+function playSound(btnColor){
+    switch(btnColor){
         case "red":
-            audio = new Audio("sounds/red.mp3")
+            audio = new Audio("sounds/red.mp3");
             audio.play();
-            break;
+        break;
         case "blue":
             audio = new Audio("sounds/blue.mp3");
             audio.play();
-            break;
+        break;
         case "green":
             audio = new Audio("sounds/green.mp3");
             audio.play();
-            break;
+        break;
         case "yellow":
             audio = new Audio("sounds/yellow.mp3");
             audio.play();
-            break; 
+        break;
     }
 }
 
-function checkAnswer(userAwnser) {
-    for(let i = unserInput.length; i < unserInput; i--){
-        if (unserInput[i] == gamePattern[i]) {
-            nextLevel();
-        } else {
-            $("body").addClass("game-over").delay(200).removeClass("game-over");
-            $("h1").text("Game Over, Press Any Key to Restart");
-            audio.src("sounds/wrong.mp3");
-            audio.play();
-            gamestarted = false;
-            break;
-        }
-    }
+function animatePress(currentColor){
+    $("#" + currentColor).addClass("pressed");
+
+  setTimeout(function () {
+    $("#" + currentColor).removeClass("pressed");
+  }, 100);
 }
 
-/*Isnt working, fix: Game-routine each time the game is running, it should test if the UserInput is Right (Dont forget each time a new
-color enters, you have to enter the old and the new Color)*/
-
-//Maybe try first the basic one: So if you get a color right it comes the next one..
-//Advanced: Each time you get it right the new Color multiply by the Level (Level 1 = 1 new Color, Level 2 = 1 old and 2 new Colors, Level 3 = 3 old and 3 new Colors).
+function startOver(){
+    level = 0;
+    gamePattern = [];
+    userClickedPattern = [];
+    gameStarted = false;
+}
