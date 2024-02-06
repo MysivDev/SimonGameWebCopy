@@ -1,44 +1,78 @@
 let audio;
-let level = 0;
-let buttonColours = ["red", "blue", "green", "yellow"];
-let randomChosenColour = buttonColours[nextSequence()];
-let userChosenColour;
-let userClickedPattern = [];
-let gamePattern = randomChosenColour;
-let gameStarted = false;
+let colours = ["red", "blue", "green", "yellow"];
+let gamePattern = [];
+let userClickedColour;
+let userInput = [];
+let playerChoosenColour;
+let gamestarted = false;
+let level;
 
-
-
-$(document).keypress(function (){
-    nextSequence();
-    gameStarted = true;
+$(document).keypress(function () {
+    if (!gamestarted) {
+        $("h1").text("Level 1");
+        gamestarted = true;
+    }
 });
 
-
-
-$('.btn').on('click', function (){
-    userChosenColour = this.id;
-    userClickedPattern.push(userChosenColour);
-    playSound(userChosenColour);
-    animatePress();
+$(".btn").click(function (Event) {
+    userClickedColour = Event.target.id;
+    userInput.push(userClickedColour);
+    playSound(userClickedColour);
+    console.log(Event.target.id);
 });
-$(`#${randomChosenColour}`).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
 
-function nextSequence(){
-    let randomNumber = Math.floor(Math.random() * 4);
-    playSound(buttonColours[randomNumber]);
+// FUNKTION SECTION //
+
+function generatedColour() {
+    let randomColour = Math.floor(Math.random() * 4);
+    gamePattern.push(colours[randomColour]);
+    return colours[randomColour];
+}
+
+function nextLevel() {
     level++;
-    $('#level-title').text(`Level ${level}`);
-    return randomNumber;
+    let repeater = level;
+    while (repeater > 0) {
+        $(`.${generatedColour()}`).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
+        audio = new Audio(`sounds/${generatedColour()}`);
+        audio.play();
+        $("h1").text("Level 1");
+        repeater--;
+    }
 }
 
-function playSound(colour){
-    audio = new Audio(`sounds/${colour}.mp3`);
-    audio.play();
+function playSound(pickedColour) {
+    switch (pickedColour) {
+        case "red":
+            audio = new Audio("sounds/red.mp3")
+            audio.play();
+            break;
+        case "blue":
+            audio = new Audio("sounds/blue.mp3");
+            audio.play();
+            break;
+        case "green":
+            audio = new Audio("sounds/green.mp3");
+            audio.play();
+            break;
+        case "yellow":
+            audio = new Audio("sounds/yellow.mp3");
+            audio.play();
+            break; 
+    }
 }
 
-function animatePress(currentColour){
-    $(currentColour).on('click', function () {
-        $(currentColour).addClass('pressed').delay(100).removeClass('pressed');        
-    });
+function checkAnswer(userAwnser) {
+    for(let i = unserInput.length; i < unserInput; i--){
+        if (unserInput[i] == gamePattern[i]) {
+            nextLevel();
+        } else {
+            $("body").addClass("game-over").delay(200).removeClass("game-over");
+            $("h1").text("Game Over, Press Any Key to Restart");
+            audio.src("sounds/wrong.mp3");
+            audio.play();
+            gamestarted = false;
+            break;
+        }
+    }
 }
